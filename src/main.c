@@ -73,6 +73,13 @@ int main_loop(ALLEGRO_DISPLAY * display, ALLEGRO_EVENT_QUEUE   * queue) {
 int main(void) {
   ALLEGRO_DISPLAY       * display;
   ALLEGRO_EVENT_QUEUE   * queue;
+  AlpsVector v1, v2;
+  AlpsVector vr;
+  v1 = alpsvector(10.0, 20.0);
+  v1 = alpsvector(30.0, 40.0);
+  vr = alpsvector_add(v1, v2);
+  printf("Vector sum: %lf %lf\n", vr.x, vr.y);
+  
   al_init();
   display = al_create_display(SCREEN_W, SCREEN_H);
   if(!display)  return 1;
@@ -91,20 +98,3 @@ int main(void) {
 }
 
 
-#ifdef THIS_IS_COMMENT
-
-
-int main(int argc, char * argv[]) {
-  AlpsVector v1, v2;
-  AlpsVector vr;
-  v1 = alpsvector(10.0, 20.0);
-  v1 = alpsvector(30.0, 40.0);
-  vr = alpsvector_add(v1, v2);
-  printf("Vector sum: %lf %lf\n", vr.x, vr.y);
-  return 0;
-}
-
-#include "alps.h"
-
-
-#endif
