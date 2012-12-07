@@ -6,10 +6,50 @@
 #define SCREEN_H 480
 
 
+/*
+* Returns a new AlpsVector
+*/
+AlpsVector alpsvector(double x, double y) {
+  AlpsVector result = { x, y };
+  return result;
+}
+
+/*
+* Returns a new AlpsVector with the summed up components of a and b.
+*/
+
+AlpsVector alpsvector_add(AlpsVector v1 , AlpsVector v2) {
+  return alpsvector(v1.x + v2.x, v1.y + v2.y);
+}
+
+char *alpsvector_inspect(AlpsVector vec)
+{
+    char *result=malloc(256); // overkill
+    sprintf(result, "Vector<%.2lf %.2lf>", vec.x, vec.y);
+
+    return result;
+}
+
+AlpsDrop * alpsdrop_init(AlpsDrop *drop, AlpsVector p, AlpsVector v) {
+  drop->position = p;
+  drop->velocity = v;
+  return drop;
+}
+
+
+void alpsdrop_tick(AlpsDrop *drop) {
+  drop->position = alpsvector_add(drop->position, drop->velocity);
+}
+
+
 int main_loop(ALLEGRO_DISPLAY * display, ALLEGRO_EVENT_QUEUE   * queue) {
   int busy = 1;
   ALLEGRO_EVENT event;
+  AlpsDrop drop;
+  alpsdrop_init(&drop, alpsvector(120.0, 0.0), alpsvector(0.0, 3.0));
+  
   while (busy) {
+    alpsdrop_tick(&drop);
     while(al_get_next_event(queue, &event)) {
       if(event.type == ALLEGRO_EVENT_KEY_DOWN) { 
         switch(((ALLEGRO_KEYBOARD_EVENT*)&event)->keycode) {
@@ -21,8 +61,9 @@ int main_loop(ALLEGRO_DISPLAY * display, ALLEGRO_EVENT_QUEUE   * queue) {
       }
     }
     /* Draw here: */
-    
-    
+    al_clear_to_color(al_map_rgb(0,0,0));
+    al_put_pixel(drop.position.x, drop.position.y, al_map_rgb(128,128,255));
+    al_flip_display();
   }
   return busy;
 }
@@ -48,3 +89,22 @@ int main(void) {
   al_destroy_display(display);
   return 0;
 }
+
+
+#ifdef THIS_IS_COMMENT
+
+
+int main(int argc, char * argv[]) {
+  AlpsVector v1, v2;
+  AlpsVector vr;
+  v1 = alpsvector(10.0, 20.0);
+  v1 = alpsvector(30.0, 40.0);
+  vr = alpsvector_add(v1, v2);
+  printf("Vector sum: %lf %lf\n", vr.x, vr.y);
+  return 0;
+}
+
+#include "alps.h"
+
+
+#endif
