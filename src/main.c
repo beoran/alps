@@ -37,8 +37,8 @@ AlpsDrop * alpsdrop_init(AlpsDrop *drop, AlpsVector p, AlpsVector v) {
 }
 
 AlpsDrop * alpsdrop_initrandom(AlpsDrop *drop) {
-  AlpsVector p = alpsvector(rand() % SCREEN_W, 0.0);
-  AlpsVector v = alpsvector(0.0, 1 + rand() % 3);
+  AlpsVector p = alpsvector(rand() % SCREEN_W, -(rand() % SCREEN_H));
+  AlpsVector v = alpsvector(0.0, 1.0 + ((double)(rand() % 30)) / 10.0);
   return alpsdrop_init(drop, p, v);
 }
 
@@ -64,7 +64,14 @@ void alpsshower_init(AlpsShower * rain, int intensity, float abberation,
 }
 
 void alpsdrop_draw(AlpsDrop * drop) {
-  al_put_pixel(drop->position.x, drop->position.y, al_map_rgb(128,128,255));
+  // al_put_pixel(drop->position.x, drop->position.y, al_map_rgb(128,128,255));
+/*  al_draw_line(drop->position.x, drop->position.y - 5, 
+               drop->position.x, drop->position.y,
+                al_map_rgb(128,128,255), 2);*/
+                
+  al_draw_filled_ellipse(drop->position.x, drop->position.y, 
+                         1.5, 6.0, al_map_rgb(128,128,255));
+                
 }
 
 void alpsshower_draw(AlpsShower * rain) {
@@ -132,9 +139,10 @@ int main(void) {
   if(!display)  return 1;
   queue   = al_create_event_queue();
   if(!queue)    return 2;
-  
+  al_init_primitives_addon();
   al_install_keyboard();
   al_install_mouse();
+  
   al_register_event_source(queue, al_get_keyboard_event_source());
   al_register_event_source(queue, al_get_mouse_event_source());
   
