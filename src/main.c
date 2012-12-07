@@ -36,6 +36,12 @@ AlpsDrop * alpsdrop_init(AlpsDrop *drop, AlpsVector p, AlpsVector v) {
   return drop;
 }
 
+AlpsDrop * alpsdrop_initrandom(AlpsDrop *drop) {
+  AlpsVector p = alpsvector(rand() % SCREEN_W, 0.0);
+  AlpsVector v = alpsvector(0.0, 1 + rand() % 3);
+  return alpsdrop_init(drop, p, v);
+}
+
 
 void alpsdrop_tick(AlpsDrop *drop) {
   drop->position = alpsvector_add(drop->position, drop->velocity);
@@ -46,7 +52,7 @@ int main_loop(ALLEGRO_DISPLAY * display, ALLEGRO_EVENT_QUEUE   * queue) {
   int busy = 1;
   ALLEGRO_EVENT event;
   AlpsDrop drop;
-  alpsdrop_init(&drop, alpsvector(120.0, 0.0), alpsvector(0.0, 3.0));
+  alpsdrop_initrandom(&drop);
   
   while (busy) {
     alpsdrop_tick(&drop);
@@ -79,6 +85,7 @@ int main(void) {
   v1 = alpsvector(30.0, 40.0);
   vr = alpsvector_add(v1, v2);
   printf("Vector sum: %lf %lf\n", vr.x, vr.y);
+  srand(time(NULL));
   
   al_init();
   display = al_create_display(SCREEN_W, SCREEN_H);
