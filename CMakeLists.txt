@@ -22,7 +22,7 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 # set(CMAKE_C_FLAGS "-fpic -fPIC")  
 
 # Find the needed packages.
-find_package(Mruby REQUIRED)
+# find_package(Mruby REQUIRED)
 find_package(Chipmunk REQUIRED)
 find_package(Allegro50 REQUIRED)
 find_package(LibXml2 REQUIRED)

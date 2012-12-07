@@ -45,17 +45,53 @@ AlpsDrop * alpsdrop_initrandom(AlpsDrop *drop) {
 
 void alpsdrop_tick(AlpsDrop *drop) {
   drop->position = alpsvector_add(drop->position, drop->velocity);
+  if (drop->position.y > SCREEN_H) {
+    alpsdrop_initrandom(drop);
+  }
 }
+
+
+void alpsshower_init(AlpsShower * rain, int intensity, float abberation, 
+                   AlpsVector velocity  ) {
+  int index;
+  rain->intensity   = ((intensity > ALPS_SHOWER_DROPS) ?
+                       intensity :  ALPS_SHOWER_DROPS);
+  rain->abberation  = abberation;
+  rain->velocity    = velocity;
+  for (index = 0; index < rain->intensity; index ++) {
+    alpsdrop_initrandom(rain->drops + index);
+  }
+}
+
+void alpsdrop_draw(AlpsDrop * drop) {
+  al_put_pixel(drop->position.x, drop->position.y, al_map_rgb(128,128,255));
+}
+
+void alpsshower_draw(AlpsShower * rain) {
+  int index;
+  for (index = 0 ; index < rain->intensity ; index++) {
+    alpsdrop_draw(rain->drops + index);
+  }
+} 
+
+void alpsshower_tick(AlpsShower * rain) {
+  int index;
+  for (index = 0; index < rain->intensity; index ++) {
+    alpsdrop_tick(rain->drops + index);
+  }
+} 
 
 
 int main_loop(ALLEGRO_DISPLAY * display, ALLEGRO_EVENT_QUEUE   * queue) {
   int busy = 1;
   ALLEGRO_EVENT event;
   AlpsDrop drop;
+  AlpsShower shower;
   alpsdrop_initrandom(&drop);
+  alpsshower_init(&shower, 50, 1.0, alpsvector(1, 0));
   
   while (busy) {
-    alpsdrop_tick(&drop);
+    
     while(al_get_next_event(queue, &event)) {
       if(event.type == ALLEGRO_EVENT_KEY_DOWN) { 
         switch(((ALLEGRO_KEYBOARD_EVENT*)&event)->keycode) {
@@ -66,9 +102,13 @@ int main_loop(ALLEGRO_DISPLAY * display, ALLEGRO_EVENT_QUEUE   * queue) {
         }
       }
     }
+    alpsdrop_tick(&drop);
+    alpsshower_tick(&shower);
+    
     /* Draw here: */
     al_clear_to_color(al_map_rgb(0,0,0));
-    al_put_pixel(drop.position.x, drop.position.y, al_map_rgb(128,128,255));
+    alpsdrop_draw(&drop);
+    alpsshower_draw(&shower);
     al_flip_display();
   }
   return busy;
